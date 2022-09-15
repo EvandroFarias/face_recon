@@ -57,9 +57,13 @@ class FaceDetection():
             face_distances = face_recognition.face_distance(
                 faces_encodings_on_db, face_encoding)
             best_match_index = np.argmin(face_distances)
+
+            name = None
+
             if True in matches:
                 name = face_owners[best_match_index]
-                face_names.append(name)
+            
+            face_names.append(name)
         
         return face_locations.astype(int), face_names
  
