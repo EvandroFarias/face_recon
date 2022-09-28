@@ -2,8 +2,7 @@ import cv2
 from FaceDetection import FaceDetection
 from MongoConfig import MongoConnectionClient as db
 
-fd = FaceDetection(r'C:\Users\Sasuk\Desktop\face_recon\faces')
-#fd.load_encoding_images("faces/")
+fd = FaceDetection()
 
 capture = cv2.VideoCapture(0)
 face_Cascade = cv2.CascadeClassifier(r'C:\Users\Sasuk\Desktop\face_recon\eyes\haarcascade_frontface.xml')
@@ -19,8 +18,8 @@ while capture.isOpened():
     if not processing and len(faces) >= 1:
         print('Saving the image')
         cv2.imwrite('./faces/teste.jpeg', frame)
-        foo = fd.detect_face(frame)
-        print(foo)
+        name = fd.detect_face(r'C:\Users\Sasuk\Desktop\face_recon\faces\teste.jpeg')
+        print(name)
 
     print('Is not saving the image')
 
