@@ -1,4 +1,3 @@
-import glob, os
 import face_recognition
 import cv2
 import numpy as np
@@ -15,6 +14,7 @@ class FaceDetection():
         self.known_names = []
         self.frame_resizing = 0.25
         self.processing = False
+        self.catracaOpen = False
 
     def save_face(self, owner, image_input):
         try:
@@ -35,8 +35,7 @@ class FaceDetection():
             self.known_faces.append(face['face_encoding'])
             self.known_names.append(face['owner'])
 
-
-    def detect_face(self, img):
+    async def detect_face(self, img):
         frame = cv2.imread(img)
         small_frame = cv2.resize(
             frame, (0, 0), fx=self.frame_resizing, fy=self.frame_resizing)
@@ -47,17 +46,18 @@ class FaceDetection():
         name = None
 
         if not self.known_faces:
-           self.load_faces()
+            self.load_faces()
 
         for face_encoding in face_encodings:
-            matches = face_recognition.compare_faces(self.known_faces, face_encoding, 0.4)
+            matches = face_recognition.compare_faces(
+                self.known_faces, face_encoding, 0.4)
             face_distances = face_recognition.face_distance(
                 self.known_faces, face_encoding)
             best_match_index = np.argmin(face_distances)
 
-
             if True in matches:
                 name = self.known_names[best_match_index]
-        
+                self.catracaOpen = True
+
         self.processing = False
-        return name
+        print(name)
