@@ -21,14 +21,3 @@ class MongoConnectionClient:
 
     def insert_one(self, args):
         self._collection.insert_one(args)
-
-
-# client = MongoClient('localhost', 27017)
-# mydb = client['facedetectapp']
-# mycollection = mydb['facedetectapp']
-
-
-
-# print(client)
-# # for i in mycollection.find({"title": "MongoDB and Python"}):
-# #     print(i)

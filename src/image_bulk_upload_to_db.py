@@ -3,7 +3,6 @@ import glob
 import os
 import face_recognition
 import cv2
-import time
 from FaceDetection import FaceDetection
 
 fd = FaceDetection()
@@ -39,7 +38,6 @@ images_path = glob.glob(os.path.join(
 for image in images_path:
     try:
         os.rename(image.upper(), multiple_replace(dict, image.upper()))
-
 
         image = multiple_replace(dict, image)
 
