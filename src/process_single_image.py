@@ -6,8 +6,9 @@ import os
 
 from FaceDetection import FaceDetection
 
-ORIGINAL_PATH = sys.argv[1]
-DEST_PATH = 'guardianface\\process_single_image\\processing-image\\'
+ORIGINAL_PATH = ' '.join(sys.argv[1:len(sys.argv)])
+#ORIGINAL_PATH = "C:\\Users\\Sasuk\\Desktop\\WIN 20221130_12_29_29_Pro.jpg"
+DEST_PATH = os.path.dirname(os.path.abspath(__file__))+"\\processing-image\\"
 
 fd = FaceDetection()
 
