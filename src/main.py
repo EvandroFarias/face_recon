@@ -8,18 +8,21 @@ import datetime
 UNK_PRS = "PESSOA NÃO RECONHECIDA"
 NO_PRS = "SEM PESSOA"
 
+DEFAULT_PATH = os.path.dirname(os.path.abspath(__file__))
+
 
 capture = cv2.VideoCapture(0)
-face_Cascade = cv2.CascadeClassifier(f'guardianface\\src\\haarcascade_frontalface_default.xml')
+face_Cascade = cv2.CascadeClassifier(f'{DEFAULT_PATH}\\haarcascade_frontalface_default.xml')
 
 fd = FaceDetection()
 fd.load_faces()
 
 def altera_arquivo_output(input):
-    with open(f"guardianface\\src\\faceoutput.txt",'w+') as f:
+    with open(f"{DEFAULT_PATH}\\faceoutput.txt",'w+') as f:
         f.write(input)
 
 altera_arquivo_output(NO_PRS)
+
 while capture.isOpened():
 
     _ret, frame = capture.read()
@@ -29,9 +32,9 @@ while capture.isOpened():
     if len(faces) >= 1:
         if not fd.processing and not fd.catracaOpen:
             fd.processing = True
-            name = asyncio.run(fd.detect_face(frame))
-            if name:
-                altera_arquivo_output(name)
+            cpf = asyncio.run(fd.detect_face(frame))
+            if cpf:
+                altera_arquivo_output(cpf)
             else:
                 altera_arquivo_output(UNK_PRS)
         for x,y,h,w in faces:
@@ -46,7 +49,7 @@ while capture.isOpened():
     if key == 115: #IF S is pressed
         print('Ending application due safe exit key')
         altera_arquivo_output(" ")
-        with open(f'guardianface\\src\logs\{datetime.datetime.now().strftime("%d-%m-%Y-%H%M%S")}.log', "w+") as f:
+        with open(f'{DEFAULT_PATH}\\logs\\{datetime.datetime.now().strftime("%d-%m-%Y-%H%M%S")}.log', "w+") as f:
             f.write(f'Aplication ended due safe exit key \nEND OF PROCESSING AT {datetime.datetime.now().strftime("%H:%M:%S")}')
         break
 

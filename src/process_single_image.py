@@ -1,4 +1,5 @@
 from datetime import date
+import datetime
 import sys
 import re
 import shutil
@@ -7,7 +8,7 @@ import os
 from FaceDetection import FaceDetection
 
 ORIGINAL_PATH = ' '.join(sys.argv[1:len(sys.argv)])
-#ORIGINAL_PATH = "C:\\Users\\Sasuk\\Desktop\\WIN 20221130_12_29_29_Pro.jpg"
+#ORIGINAL_PATH = "C:\\Users\\Sasuk\\Desktop\\EVANDRO CPF154515454.jpg"
 DEST_PATH = os.path.dirname(os.path.abspath(__file__))+"\\processing-image\\"
 
 fd = FaceDetection()
@@ -34,7 +35,12 @@ def multiple_replace(dict, text):
     regex = re.compile("(%s)" % "|".join(map(re.escape, dict.keys())))
     return regex.sub(lambda mo: dict[mo.string[mo.start():mo.end()]], text)
 
-excGiven = False
+def save_log(ex = None):
+    with open(f'{DEST_PATH}logs\\{filename}.log',"w+") as f:
+        if not ex:
+            f.write("SUCCESS")
+        else:
+            f.write(f"ERROR:\n {ex}")
 
 try:
     img_to_process = None
@@ -47,16 +53,10 @@ try:
     (filename, _ext) = os.path.splitext(basename)
 
     fd.save_face(filename, img_to_process)
+    save_log()
 except Exception as ex:
-    excGiven = ex
-finally:
-    f = open(f'{DEST_PATH}logs\\{filename}.log',"w+")
-    if excGiven:
-        f.write(f"\nERROR:\n {excGiven}")
-    else:
-        f.write(f"SUCCESS")
-    
-    f.close()
+    save_log(ex)
 
+finally:
     if img_to_process:
         os.remove(img_to_process)

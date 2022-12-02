@@ -12,6 +12,8 @@ class FaceDetection():
     def __init__(self):
         self.known_faces = []
         self.known_names = []
+        self.known_cpfs = []
+
         self.frame_resizing = 0.25
         self.processing = False
         self.catracaOpen = False
@@ -25,8 +27,11 @@ class FaceDetection():
         if len(img_encodings) <= 0:
             raise Exception("No recognizable face on image.")
 
+        (name,cpf) = self.adjust_data(owner)
+
         record = {
-            "owner": owner,
+            "owner": name,
+            "cpf": cpf,
             "face_encoding": img_encodings.tolist()
         }
         self.conn.insert_one(record)
@@ -35,6 +40,7 @@ class FaceDetection():
         for face in self.conn.select_all():
             self.known_faces.append(face['face_encoding'])
             self.known_names.append(face['owner'])
+            self.known_cpfs.append(face['cpf'])
 
     async def detect_face(self, frame):
         try:
@@ -45,7 +51,7 @@ class FaceDetection():
 
             face_encodings = face_recognition.face_encodings(rgb_frame)
 
-            name = None
+            cpf = None
 
             if not self.known_faces:
                 self.load_faces()
@@ -58,11 +64,17 @@ class FaceDetection():
                 best_match_index = np.argmin(face_distances)
 
                 if True in matches:
-                    name = self.known_names[best_match_index]
+                    cpf = self.known_cpfs[best_match_index]
                     self.catracaOpen = True
 
             self.processing = False
 
-            return name
+            return cpf
         except Exception as ex:
             return ex
+
+    def adjust_data(self, data: str):
+        if "CPF" not in data:
+            raise Exception('Incorrect file name (Missing "CPF")')
+        (name, cpf) = data.split("CPF")
+        return name, cpf

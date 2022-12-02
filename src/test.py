@@ -1,3 +1,3 @@
-import sys
-
-print(' '.join(sys.argv[1:len(sys.argv)]))
+string = "Evandro francisco CPF12387123"
+(name, cpf) = string.split("CPF")
+print(name)
