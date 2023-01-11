@@ -7,8 +7,10 @@ import os
 
 from FaceDetection import FaceDetection
 
-ORIGINAL_PATH = ' '.join(sys.argv[1:len(sys.argv)])
 #ORIGINAL_PATH = "C:\\Users\\Sasuk\\Desktop\\EVANDRO CPF154515454.jpg"
+
+ORIGINAL_PATH = ' '.join(sys.argv[1:len(sys.argv)])
+CPF_DO_INPUT, _ext = os.path.splitext(ORIGINAL_PATH.split("CPF")[1])
 DEST_PATH = os.path.dirname(os.path.abspath(__file__))+"\\processing-image\\"
 
 fd = FaceDetection()
@@ -29,19 +31,16 @@ dict = {
     "`": " ",
 }
 
-filename = date.today()
-
 def multiple_replace(dict, text):
     regex = re.compile("(%s)" % "|".join(map(re.escape, dict.keys())))
     return regex.sub(lambda mo: dict[mo.string[mo.start():mo.end()]], text)
 
 def save_log(ex = None):
-    with open(f'{DEST_PATH}logs\\{filename}.log',"w+") as f:
+    with open(f'{DEST_PATH}logs\\{CPF_DO_INPUT}.log',"a") as f:
         if not ex:
             f.write("SUCCESS")
         else:
-            f.write(f"ERROR:\n {ex}")
-
+            f.write(f'ERROR:\n [{datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S")}]: \n {ex} \n')
 try:
     img_to_process = None
     img_to_process = shutil.copy(ORIGINAL_PATH, DEST_PATH)
