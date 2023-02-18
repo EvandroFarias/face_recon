@@ -1,13 +1,15 @@
 import face_recognition
 import cv2
 import numpy as np
+import json
+
 from MongoConfig import MongoConnectionClient as db
 
 
 class FaceDetection():
 
     conn = db('localhost', 27017)
-    collection = conn.connect_to_collection('facedetectapp', 'facedetectapp')
+    collection = conn.connect_to_collection('guardian', 'guardianface')
 
     def __init__(self):
         self.known_faces = []
@@ -18,7 +20,7 @@ class FaceDetection():
         self.processing = False
         self.catracaOpen = False
 
-    def save_face(self, owner, image_input):
+    def send_face_to_guardian(self, owner, image_input):
 
         img = cv2.imread(image_input)
         rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -30,16 +32,18 @@ class FaceDetection():
         (name,cpf) = self.adjust_data(owner)
 
         record = {
-            "owner": name,
             "cpf": cpf,
             "face_encoding": img_encodings.tolist()
         }
+
+        return json.dumps(record)
+        
+    def save_to_mongo_collection(self, record):
         self.conn.insert_one(record)
 
     def load_faces(self):
         for face in self.conn.select_all():
             self.known_faces.append(face['face_encoding'])
-            self.known_names.append(face['owner'])
             self.known_cpfs.append(face['cpf'])
 
     async def detect_face(self, frame):

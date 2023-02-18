@@ -20,4 +20,4 @@ class MongoConnectionClient:
         return lista_do_select
 
     def insert_one(self, args):
-        self._collection.insert_one(args)
+        self._collection.update_one({'cpf': args['cpf']}, {"$set": {"face_encoding": args['face_encoding']}}, upsert=True)
