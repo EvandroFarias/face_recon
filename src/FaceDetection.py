@@ -17,8 +17,6 @@ class FaceDetection():
         self.known_cpfs = []
 
         self.frame_resizing = 0.25
-        self.processing = False
-        self.catracaOpen = False
 
     def send_face_to_guardian(self, owner, image_input):
 
@@ -29,7 +27,7 @@ class FaceDetection():
         if len(img_encodings) <= 0:
             raise Exception("No recognizable face on image.")
 
-        (name,cpf) = self.adjust_data(owner)
+        (name, cpf) = self.adjust_data(owner)
 
         record = {
             "cpf": cpf,
@@ -46,7 +44,7 @@ class FaceDetection():
             self.known_faces.append(face['face_encoding'])
             self.known_cpfs.append(face['cpf'])
 
-    async def detect_face(self, frame):
+    def detect_face(self, frame):
         try:
             # frame = cv2.imread(img)
             small_frame = cv2.resize(
@@ -69,9 +67,6 @@ class FaceDetection():
 
                 if True in matches:
                     cpf = self.known_cpfs[best_match_index]
-                    self.catracaOpen = True
-
-            self.processing = False
 
             return cpf
         except Exception as ex:
