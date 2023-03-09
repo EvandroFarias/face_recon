@@ -1,11 +1,10 @@
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import os
 import time
 import cv2
-import asyncio
 from FaceDetection import FaceDetection
 from files.FilesService import FileManipulation
-
 
 DEFAULT_PATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -29,23 +28,29 @@ fs.delete_nfiles(CATRACA_CLOSED,CATRACA_OPENED,APP_STARTED)
 
 while capture.isOpened():
 
-    _ret, frame = capture.read()
+    _success, frame = capture.read()
+
+    if not _success:
+         # Ignorando frame vazio
+         continue
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = face_Cascade.detectMultiScale(gray,1.1,4)
-    if len(faces) >= 1 and not fs.check_file(CATRACA_OPENED):
+    if len(faces) > 0 and not fs.check_file(CATRACA_OPENED):
         cpf = fd.detect_face(frame)
         if cpf:
              fs.write_file(file=FACE_OUT, text=cpf)
              fs.create_file(CATRACA_OPENED)
         else:
-             fs.write_file(file=FACE_OUT, text=UNK_PRS)
+             fs.write_file(file=FACE_OUT, text=UNK_PRS)       
     for x,y,h,w in faces:
-            cv2.rectangle(frame,(x,y), (x+w,y+h),(0,0,255),3)
-            if cpf:
-                cv2.rectangle(frame,(x,y), (x+w,y+h),(0,255,10),3)
+          if cpf:
+               cv2.rectangle(frame,(x,y), (x+w,y+h),(0,255,10),3)
+          else:
+               cv2.rectangle(frame,(x,y), (x+w,y+h),(0,0,255),3)
                  
-    cv2.imshow("GuardianFace", cv2.resize(frame, [300,300]))
+                 
+    cv2.imshow("GuardianFace", cv2.flip(cv2.resize(frame, [300,300]),1))
 
     if not fs.check_file(APP_STARTED):
          time.sleep(1)

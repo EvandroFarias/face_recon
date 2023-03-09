@@ -1,4 +1,3 @@
-from cgi import test
 from pymongo import MongoClient
 
 class MongoConnectionClient:

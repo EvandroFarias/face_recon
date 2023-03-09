@@ -17,13 +17,12 @@ def save_log(ex = None, method = None, filename = "upsert.bool"):
         else:
             f.write(f'ERROR:\n {ex} \n')
             
-
 try:
     with open(f"{ORIGINAL_PATH}\\etl\\upsert.json", 'r') as f:
-            record_list = f.read().split("|")
-            for i in record_list[:len(record_list)-1]:
-                j = json.loads(i)
-                conn.insert_one(j)
+        record_list = f.read().split("|")
+        for i in record_list[:len(record_list)-1]:
+            j = json.loads(i)
+            conn.insert_one(j)
                 
             save_log(method='w')
 except Exception as ex:
