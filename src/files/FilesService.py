@@ -19,11 +19,15 @@ class FileManipulation():
         if not os.path.isfile(path):
             open(path, 'x').close()
 
-    def write_file(self, file, text):
+    def write_file(self, file, text, method = "w"):
         path = f'{self.original_path}\\{file}'
-        with open(path, "w") as f:
+        with open(path, method) as f:
             f.write(text)
 
+    def write_nlines_file(self, file, text, method = "w"):
+        path = f'{self.original_path}\\{file}'
+        with open(path, method) as f:
+            f.writelines(text)
     
     def delete_nfiles(self, *args):
         for file in args:

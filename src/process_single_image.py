@@ -7,7 +7,7 @@ import os
 
 from FaceDetection import FaceDetection
 
-#RIGINAL_PATH = "C:\\Users\\Sasuk\\Desktop\\EVANDRO CPF154515454.jpg"
+#ORIGINAL_PATH = "C:\\Users\\Sasuk\\Desktop\\EVANDRO CPF154515454.jpg"
 
 ORIGINAL_PATH = ' '.join(sys.argv[1:len(sys.argv)])
 CPF_DO_INPUT, _ext = os.path.splitext(ORIGINAL_PATH.split("CPF")[1])
