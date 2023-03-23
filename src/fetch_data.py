@@ -11,14 +11,14 @@ conn.connect_to_collection('guardian', 'guardianface')
 the_date = datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
 
 def save_log(ex = None, method = None, filename = "upsert.bool"):
-    with open(f'{ORIGINAL_PATH}\\etl\\logs\\{filename}', method) as f:
+    with open(f'{ORIGINAL_PATH}\\ETL\\logs\\{filename}', method) as f:
         if not ex:
             f.write(f'SUCCESS\n')
         else:
             f.write(f'ERROR:\n {ex} \n')
             
 try:
-    with open(f"{ORIGINAL_PATH}\\etl\\upsert.json", 'r') as f:
+    with open(f"{ORIGINAL_PATH}\\ETL\\upsert.json", 'r') as f:
         record_list = f.read().split("|")
         for i in record_list[:len(record_list)-1]:
             j = json.loads(i)
@@ -28,8 +28,8 @@ try:
 except Exception as ex:
     save_log(ex, method='a', filename=f"error-{the_date}.log")
 finally:
-    if os.path.isfile(f'{ORIGINAL_PATH}\\etl\\upsert.json'):
-        os.remove(f'{ORIGINAL_PATH}\\etl\\upsert.json')
+    if os.path.isfile(f'{ORIGINAL_PATH}\\ETL\\upsert.json'):
+        os.remove(f'{ORIGINAL_PATH}\\ETL\\upsert.json')
 
 # for file in os.listdir(ORIGINAL_PATH):
 #     iter = os.path.join(ORIGINAL_PATH, file)

@@ -11,7 +11,7 @@ from FaceDetection import FaceDetection
 
 ORIGINAL_PATH = ' '.join(sys.argv[1:len(sys.argv)])
 CPF_DO_INPUT, _ext = os.path.splitext(ORIGINAL_PATH.split("CPF")[1])
-DEST_PATH = os.path.dirname(os.path.abspath(__file__))+"\\processing-image\\"
+DEST_PATH = os.path.dirname(os.path.abspath(__file__))
 
 fd = FaceDetection()
 
@@ -36,14 +36,14 @@ def multiple_replace(dict, text):
     return regex.sub(lambda mo: dict[mo.string[mo.start():mo.end()]], text)
 
 def save_log(ex = None, to_send = None):
-    with open(f'{DEST_PATH}logs\\{CPF_DO_INPUT}.log',"w") as f:
+    with open(f'{DEST_PATH}\\logs\\processed-image\\{CPF_DO_INPUT}.log',"w") as f:
         if not ex:
             f.write(to_send)
         else:
             f.write(f'ERROR:\n [{datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S")}]: \n {ex} \n')
 try:
     img_to_process = None
-    img_to_process = shutil.copy(ORIGINAL_PATH, DEST_PATH)
+    img_to_process = shutil.copy(ORIGINAL_PATH, DEST_PATH+"\\processing-image\\")
 
     os.rename(img_to_process.upper(), multiple_replace(dict, img_to_process.upper()))
     img_to_process = multiple_replace(dict, img_to_process)
