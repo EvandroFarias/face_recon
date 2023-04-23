@@ -29,7 +29,7 @@ def multiple_replace(dict, text):
     regex = re.compile("(%s)" % "|".join(map(re.escape, dict.keys())))
     return regex.sub(lambda mo: dict[mo.string[mo.start():mo.end()]], text)
 
-path_to_lookup = glob.glob(os.path.join(DEFAULT_PATH+"\\Pictures", "*.jp*"))
+path_to_lookup = glob.glob(os.path.join(DEFAULT_PATH+"etl\\pictures", "*.jp*"))
 
 success_text = []
 errors = []

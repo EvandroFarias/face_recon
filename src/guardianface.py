@@ -1,4 +1,3 @@
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import os
 import time
@@ -7,25 +6,24 @@ from FaceDetection import FaceDetection
 from files.FilesService import FileManipulation
 
 DEFAULT_PATH = os.path.dirname(os.path.abspath(__file__))
-
-#LARGURA x ALTURA
-#SIZES = [150,300]
+SIZES = []
 
 with open(f'{DEFAULT_PATH}\\sizes.cfg') as f:
-    SIZES = f.readline().split(',')
-    for index, size in enumerate(SIZES):
-         SIZES[index] = int(size)
-         if int(size) < 150:
-              SIZES[index] = 150
+     config = f.readline().split(',')
+     for size in config:
+          size = int(size)
+          if size < 150:
+               size = 150
+          SIZES.append(size)
 
 UNK_PRS = "PESSOA NÃO RECONHECIDA"
 NO_PRS = "SEM PESSOA"
 
-APP_CLOSED = "app_closed.bool"
-FACE_LOCATED = "face_located.bool"
-APP_STARTED = "app_started.bool"
+APP_CLOSED = "etl\\app_closed.bool"
+FACE_LOCATED = "etl\\face_located.bool"
+APP_STARTED = "etl\\app_started.bool"
 
-FACE_OUT = "faceoutput.txt"
+FACE_OUT = "etl\\face_output.txt"
 
 capture = cv2.VideoCapture(0)
 face_Cascade = cv2.CascadeClassifier(f'{DEFAULT_PATH}\\haarcascade_frontalface_default.xml')
@@ -33,15 +31,15 @@ face_Cascade = cv2.CascadeClassifier(f'{DEFAULT_PATH}\\haarcascade_frontalface_d
 fs = FileManipulation(DEFAULT_PATH)
 fd = FaceDetection()
 fd.load_faces()
+detect = cv2.QRCodeDetector()
+
 
 fs.delete_nfiles(APP_CLOSED,FACE_LOCATED,APP_STARTED)
 
-def read_qr_code(frame):
-          detect = cv2.QRCodeDetector()
-          value, points, straight_qrcode = detect.detectAndDecode(frame)
-
-          if value != None:
-               return value
+# def read_qr_code(qrcode):
+#      value, points, straight_qrcode = detect.detectAndDecode(qrcode)
+#      if value:
+#           return value
 
 while capture.isOpened():
 
@@ -51,25 +49,29 @@ while capture.isOpened():
           # Ignorando frame vazio
           continue
 
+     # print(read_qr_code(frame))
+
      gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
      faces = face_Cascade.detectMultiScale(gray,1.1,4)
-     if len(faces) > 1:
-          if not fs.check_file(FACE_LOCATED):
-               cpf = fd.detect_face(frame)
-               if cpf:
-                    fs.write_file(file=FACE_OUT, text=cpf)
-                    fs.create_file(FACE_LOCATED)
-               else:
-                    fs.write_file(file=FACE_OUT, text=UNK_PRS)
+     if len(faces) > 0 and not fs.check_file(FACE_LOCATED):
+          cpf = fd.detect_face(frame)
+          if cpf:
+               fs.write_file(file=FACE_OUT, text=cpf)
+               fs.create_file(FACE_LOCATED)
+          else:
+               fs.write_file(file=FACE_OUT, text=UNK_PRS)
+     
+     if fs.check_file("\\etl\\mk_prnt.bool"):
+          cv2.imwrite(DEFAULT_PATH+'\\etl\\foto.jpeg', frame)
+          fs.delete_file("\\etl\\mk_prnt.bool")
 
-          for x,y,h,w in faces:
-               if cpf:
-                    cv2.rectangle(frame,(x,y), (x+w,y+h),(0,255,10),3)
-               else:
-                    cv2.rectangle(frame,(x,y), (x+w,y+h),(0,0,255),3)
-
-     print(read_qr_code(frame))
-                    
+     for x,y,h,w in faces:
+          if cpf:
+               cv2.rectangle(frame,(x,y), (x+w,y+h),(0,255,10),3)
+          else:
+               cv2.rectangle(frame,(x,y), (x+w,y+h),(0,0,255),3)
+     
+             
      cv2.imshow("GuardianFace", cv2.flip(cv2.resize(frame, SIZES),1))
 
      if not fs.check_file(APP_STARTED):
