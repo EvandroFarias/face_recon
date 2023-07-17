@@ -1,14 +1,7 @@
-import os
+import re
 
-
-DEFAULT_PATH = os.path.dirname(os.path.abspath(__file__))
-
-
-with open(f'{DEFAULT_PATH}\\sizes.txt') as f:
-    SIZES = f.readline().split(',')
-    for index, size in enumerate(SIZES):
-         SIZES[size] = int(size)
-         if int(size) < 150:
-              SIZES[index] = 150
-
-print(SIZES)
+string = 'alice paiva silva cPf61140145371'
+if re.search(r'(?i)cpf', string):
+     print(re.split(r'(?i)cpf', string,2))
+else:
+     print('dont match')

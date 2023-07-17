@@ -1,3 +1,4 @@
+import re
 import face_recognition
 import cv2
 import numpy as np
@@ -73,7 +74,7 @@ class FaceDetection():
             return ex
 
     def adjust_data(self, data: str):
-        if "CPF" not in data:
+        if not re.search(r'(?i)cpf', data):
             raise Exception('Incorrect file name (Missing "CPF")')
-        (name, cpf) = data.split("CPF")
+        (name, cpf) = re.split(r'(?i)cpf', data,2)
         return name, cpf
