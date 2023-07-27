@@ -12,12 +12,13 @@ class FaceDetection():
     conn = db('localhost', 27017)
     collection = conn.connect_to_collection('guardian', 'guardianface')
 
-    def __init__(self):
+    def __init__(self, compa_ratio = 0.4):
         self.known_faces = []
         self.known_names = []
         self.known_cpfs = []
 
         self.frame_resizing = 0.25
+        self.compa_ratio = compa_ratio
 
     def send_face_to_guardian(self, owner, image_input):
 
@@ -61,7 +62,7 @@ class FaceDetection():
 
             for face_encoding in face_encodings:
                 matches = face_recognition.compare_faces(
-                    self.known_faces, face_encoding, 0.4)
+                    self.known_faces, face_encoding, self.compa_ratio)
                 face_distances = face_recognition.face_distance(
                     self.known_faces, face_encoding)
                 best_match_index = np.argmin(face_distances)

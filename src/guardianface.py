@@ -15,6 +15,10 @@ with open(f'{DEFAULT_PATH}\\sizes.cfg') as f:
           if size < 150:
                size = 150
           SIZES.append(size)
+with open(f'{DEFAULT_PATH}\\ratio.cfg') as f:
+     compa_ratio = float((float)(f.readlines()[0]))
+     if compa_ratio <=0 or compa_ratio>= 1:
+          compa_ratio = 0.4
 
 UNK_PRS = "PESSOA NÃO RECONHECIDA"
 NO_PRS = "SEM PESSOA"
@@ -29,7 +33,7 @@ capture = cv2.VideoCapture(0)
 face_Cascade = cv2.CascadeClassifier(f'{DEFAULT_PATH}\\haarcascade_frontalface_default.xml')
 
 fs = FileManipulation(DEFAULT_PATH)
-fd = FaceDetection()
+fd = FaceDetection(compa_ratio=compa_ratio)
 fd.load_faces()
 detect = cv2.QRCodeDetector()
 
