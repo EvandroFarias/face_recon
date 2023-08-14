@@ -35,7 +35,6 @@ face_Cascade = cv2.CascadeClassifier(f'{DEFAULT_PATH}\\haarcascade_frontalface_d
 fs = FileManipulation(DEFAULT_PATH)
 fd = FaceDetection(compa_ratio=compa_ratio)
 fd.load_faces()
-detect = cv2.QRCodeDetector()
 
 
 fs.delete_nfiles(APP_CLOSED,FACE_LOCATED,APP_STARTED)
